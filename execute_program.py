@@ -4,125 +4,6 @@ import csv
 import subprocess
 import os
 from datetime import datetime
-# Tkinter 
-from tkinter import *
-from tkinter import ttk
-from tkinter import filedialog
-# Local
-from execute_program import read_csv_and_execute
-
-current_directory = os.getcwd()
-sub_directory = 'input_csv'
-csv_file_name = 'input.csv'
-csv_file_path = os.path.join(current_directory, sub_directory, csv_file_name)
-program_file_path = ''
-
-class RunFromCSV:
-    """
-    Overall class to manage program assets and
-    behavior.
-    """
-
-    def __init__(self):
-        """
-        Initialize the program and create
-        resources.
-        """
-        self.csv_file_path = self._get_csv()
-        self.new_program = ''
-        self.exec_time = ''
-        self.root_window = None
-
-    def _get_csv(self):
-        """
-        Get's the csv that the programs are stored in.
-        """
-        current_directory = os.getcwd()
-        sub_directory = 'input_csv'
-        csv_file_name = 'input.csv'
-        csv_file_path = os.path.join(
-            current_directory, 
-            sub_directory, 
-            csv_file_name
-        )
-        return csv_file_path
-    
-    def run_program(self):
-        """
-        Start the main loop for the program.
-        """
-        self.root_window = self._root_window()
-        self.root_window.mainloop()
-
-    def _root_window(self):
-        """
-        Set the attributes for the main
-        tkinter window.
-        """
-        root = Tk()
-        #Define the window.
-        root.title("Program Scheduler")
-        label1=Label(root, text='Add a new program to execute:', font=('Aerial',10))
-        label1.pack()
-        button1=Button(root, text='Select Program', command=self._add_program_window)
-        button1.pack()
-        rpg_button=Button(root, text='Execute Programs', command=self._execute_programs)
-        rpg_button.pack()
-        
-        return root
-    
-    def _execute_programs(self):
-        """
-        Calls the read_csv_and_execute function.
-        """
-        read_csv_and_execute(self.csv_file_path)
-
-    # Function to open another window with file options
-    def _add_program_window(self):
-        file_options_window = Toplevel(self.root_window)
-        file_options_window.title("File Options")
-
-        label2=Label(
-            file_options_window, 
-            text='Add a Program', 
-            font=('Aerial',10)
-        )
-        label2.pack()
-
-        choose_file = Button(
-            file_options_window, 
-            text='Choose file',
-            command=self._add_program_window
-        )
-        choose_file.pack()
-
-        label3=Label(
-            file_options_window, 
-            text='Set execution interval', 
-            font=('Aerial',10)
-        )
-        label3.pack()
-
-        execution_style = StringVar()
-        execution = ttk.Combobox(file_options_window, textvariable=execution_style)
-        execution['values'] = ('Hourly', 'Daily', 'Weekly', 'None')
-        execution.state(["readonly"])
-        execution.pack()
-
-        label4=Label(
-            file_options_window, 
-            text='Submit the new program', 
-            font=('Aerial',10)
-        )
-        label4.pack()
-
-        submit = Button(
-            file_options_window,
-            text="Submit",
-            command=self._add_program_window
-        )
-        submit.pack()
-
 
 def execute_python_program(file_path):
     """
@@ -205,8 +86,6 @@ def read_csv_and_execute(csv_file_path):
     with open(csv_file_path, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(data)
-
-                
 
 def is_valid_file_path(path):
     """
@@ -330,24 +209,3 @@ def weekly_execution(
             return False
     else:
         return False
-
-read_csv_and_execute(csv_file_path)
-
-def load_file_path():
-    """
-    Opens a tkinter filedialog box in order to load a program.
-    """
-    file_path = filedialog.askdirectory(title="Select a python program")
-    return file_path
-
-
-
-
-if __name__ == '__main__':
-    # Make a program instance, and run.
-    rfc = RunFromCSV()
-    rfc.run_program()
-
-    
-
-    
