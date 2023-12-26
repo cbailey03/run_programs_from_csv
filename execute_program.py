@@ -3,7 +3,9 @@
 import csv
 import subprocess
 import os
+import time
 from datetime import datetime
+import threading
 
 def execute_python_program(file_path):
     """
@@ -14,10 +16,23 @@ def execute_python_program(file_path):
     except subprocess.CalledProcessError as e:
         print(f"Error executing {file_path}: {e}")
 
-def read_csv_and_execute(csv_file_path):
+def thread_read_csv_and_execute(csv_file_path):
     """
     Opens the csv file, skips the header, reads each row.
     If the row and column 0 are populated, execute the file path.
+    """
+    active = True
+    while active == True:    
+        if threading.main_thread().is_alive() == False:
+            break
+        get_and_run_programs(csv_file_path)
+        
+        time.sleep(30)
+
+
+def get_and_run_programs(csv_file_path):
+    """
+    Gets the list of programs and runs them.
     """
     # Get the current date.
     current_date = datetime.today()
@@ -25,7 +40,6 @@ def read_csv_and_execute(csv_file_path):
 
     with open(csv_file_path, 'r') as csv_file:
         csv_reader = csv.reader(csv_file)
-        csv_writer = csv.writer(csv_file)
         
         # Read the header row.
         header_row = next(csv_reader)

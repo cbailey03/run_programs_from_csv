@@ -4,13 +4,16 @@ import csv
 import subprocess
 import os
 from datetime import datetime
+# Third-party
+import threading
 # Tkinter 
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 # Local
-from execute_program import read_csv_and_execute
+from execute_program import thread_read_csv_and_execute
 from add_new_program import add_new_program_to_csv
+from remove_program import populate_listbox, remove_selected_program
 
 current_directory = os.getcwd()
 sub_directory = 'input_csv'
@@ -34,6 +37,8 @@ class RunFromCSV:
         self.execution = ''
         self.root_window = None
         self.file_options_window = None
+        self.list_box_window = None
+        self.list_box_choice = None
 
     def _get_csv(self):
         """
@@ -68,16 +73,48 @@ class RunFromCSV:
         label1.pack()
         button1=Button(root, text='Select Program', command=self._add_program_window)
         button1.pack()
-        rpg_button=Button(root, text='Execute Programs', command=self._execute_programs)
-        rpg_button.pack()
+        remove_program_label=Label(root, text='Remove a program from execution:', font=('Aerial',10))
+        remove_program_label.pack()
+        remove_program_button=Button(root, text='Remove Program', command=self._remove_program_listbox)
+        remove_program_button.pack()
         
         return root
     
+    def _remove_program_listbox(self):
+        """
+        Opens up a listbox to select and remove a program.
+        """
+        self.list_box_window = Toplevel(self.root_window)
+        self.list_box_window.title("Program Options")
+
+        choices = populate_listbox(self.csv_file_path)
+        choicesvar = StringVar(value=choices)
+        lbox = Listbox(self.list_box_window, listvariable=choicesvar, width=200)
+        lbox.pack()
+
+        def _set_lbox(event):
+            self.list_box_choice = lbox.get(ACTIVE)
+
+        lbox.bind("<<ListboxSelect>>", _set_lbox)
+        
+        # Create a button to load the selected CSV file
+        remove_button = Button(self.list_box_window, text="Remove", command=self._remove_program_click)
+        remove_button.pack()
+
+    def _remove_program_click(self):
+        """
+        Executes the remove program function.
+        """
+        selected_program = self.list_box_choice
+        remove_selected_program(selected_program, self.csv_file_path)
+        print("Program removed.")
+        self.list_box_window.destroy()
+
     def _execute_programs(self):
         """
         Calls the read_csv_and_execute function.
         """
-        read_csv_and_execute(self.csv_file_path)
+        thread_read_csv_and_execute(self.csv_file_path)
 
     # Function to open another window with file options
     def _add_program_window(self):
@@ -149,19 +186,23 @@ class RunFromCSV:
         """
         Submits a new program to be stored in the csv. 
         """
-        print(self.execution)
         add_new_program_to_csv(
             self.csv_file_path,
             self.new_program,
             self.execution
         )
+        print("Program added.")
     
     
 
 if __name__ == '__main__':
     # Make a program instance, and run.
     rfc = RunFromCSV()
-    rfc.run_program()
+    thread1 = threading.Thread(target=rfc.run_program, args=())
+    thread1.start()
+    thread2 = threading.Thread(target=rfc._execute_programs, args=())
+    thread2.start()
+    
 
     
 

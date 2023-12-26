@@ -1,6 +1,8 @@
 ## Imports
 # Standard
 import csv
+import uuid
+
 def add_new_program_to_csv(
         csv_file_path,
         program_file_path, 
@@ -37,14 +39,19 @@ def build_new_program_list(
     """
     new_list = []
     if execution_style == "None":
-        new_list = [program_file_path, "no", "no", "no", ""]
+        new_list = [program_file_path, "no", "no", "no", "", generate_unique_id()]
         return new_list
     elif execution_style == "Hourly":
-        new_list = [program_file_path, "yes", "no", "no", ""]
+        new_list = [program_file_path, "yes", "no", "no", "", generate_unique_id()]
         return new_list
     elif execution_style == "Daily":
-        new_list = [program_file_path, "no", "yes", "no", ""]
+        new_list = [program_file_path, "no", "yes", "no", "", generate_unique_id()]
         return new_list
     else:
-        new_list = [program_file_path, "no", "no", "yes", ""]
+        new_list = [program_file_path, "no", "no", "yes", "", generate_unique_id()]
         return new_list
+
+
+def generate_unique_id():
+    unique_id = uuid.uuid4()
+    return str(unique_id)
