@@ -96,10 +96,12 @@ def get_and_run_programs(csv_file_path):
                 )
                 row[4] = execution_time
                 data.append(row)
-
-    with open(csv_file_path, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerows(data)
+    try:
+        with open(csv_file_path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerows(data)
+    except:
+        pass
 
 def is_valid_file_path(path):
     """

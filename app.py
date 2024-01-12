@@ -11,9 +11,9 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 # Local
-from execute_program import thread_read_csv_and_execute
-from add_new_program import add_new_program_to_csv
-from remove_program import populate_listbox, remove_selected_program
+from modules.execute_program import thread_read_csv_and_execute
+from modules.add_new_program import add_new_program_to_csv
+from modules.remove_program import populate_listbox, remove_selected_program
 
 current_directory = os.getcwd()
 sub_directory = 'input_csv'
